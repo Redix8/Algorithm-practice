@@ -1,7 +1,7 @@
 class Heap{
     constructor(compare){
         this.heap = []
-        this.compare = compare
+        this.compare = compare    //for minheap return a-b, for maxheap return b-a
         this.length = this.heap.length        
     }
     push(item){
