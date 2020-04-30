@@ -1,47 +1,62 @@
-class Heap{
-    constructor(compare){
-        this.heap = []
-        this.compare = compare    //for minheap return a-b, for maxheap return b-a
-        this.length = this.heap.length        
+class Heap {
+    constructor(_compare) {
+        this.heap = [];
+        this.compare = (arr, a, b) => {
+            return _compare(arr[a], arr[b]) > 0;
+        };
+        this.length = this.heap.length;
     }
-    push(item){
-        this.heap.push(item)
-        let idx = this.heap.length - 1        
-        while(idx > 0 ){
-            const parent = parseInt((idx-1) / 2)
-            if(this.compare(this.heap[idx], this.heap[parent]) > 0){
-                break
+
+    swap(arr, idx1, idx2) {
+        [arr[idx1], arr[idx2]] = [arr[idx2], arr[idx1]];
+        return arr;
+    }
+
+    push(item) {
+        let heap = this.heap;
+        heap.push(item);
+        let idx = heap.length - 1;
+        while (idx > 0) {
+            const parent = parseInt((idx - 1) / 2);
+            if (this.compare(heap, idx, parent)) {
+                break;
             }
-            [this.heap[idx], this.heap[parent]] = [this.heap[parent], this.heap[idx]]
-            idx = parent
+            heap = this.swap(heap, idx, parent);
+            idx = parent;
         }
-        this.length = this.heap.length
+        this.length = heap.length;
+        this.heap = heap;
+        console.log(heap, this.heap);
     }
-    pop(){
-        const head = this.heap.shift()
-        if(this.heap.length){
-            this.heap.unshift(this.heap.pop())
-        }        
-        let cur = 0
-        while(true){
-            const left = cur*2+1
-            const right = cur*2+2
-            if(left >= this.heap.length) break
-            let next = cur
-            if(this.compare(this.heap[next], this.heap[left]) > 0){
-                next = left
-            }
-            if(right < this.heap.length && this.compare(this.heap[next], this.heap[right]) > 0){
-                next = right
-            }
-            if(next === cur) break
-            [this.heap[cur], this.heap[next]] = [this.heap[next], this.heap[cur]]
-            cur = next        
+    pop() {
+        let heap = this.heap;
+        if (heap.length > 1) {
+            heap = this.swap(heap, 0, heap.length - 1);
         }
-        this.length = this.heap.length
-        return head        
+        const head = heap.pop();
+        let cur = 0;
+
+        while (true) {
+            const left = cur * 2 + 1;
+            const right = cur * 2 + 2;
+            if (left >= heap.length) break;
+            let next = cur;
+            if (this.compare(heap, next, left)) {
+                next = left;
+            }
+            if (right < heap.length && this.compare(heap, next, right)) {
+                next = right;
+            }
+            if (next === cur) break;
+            heap = this.swap(heap, cur, next);
+            cur = next;
+        }
+        this.length = heap.length;
+        this.heap = heap;
+
+        return head;
     }
-    head(){
-        return this.heap[0]              
+    head() {
+        return this.heap[0];
     }
 }
